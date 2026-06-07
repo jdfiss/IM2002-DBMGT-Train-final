@@ -73,7 +73,9 @@ def seed():
                     MATCH (a:MetroStation {station_id: $from_id})
                     MATCH (b:MetroStation {station_id: $to_id})
                     MERGE (a)-[r:METRO_LINK]->(b)
-                    SET r.line = $line, r.travel_time_min = $time
+                    SET r.line = $line, r.travel_time_min = $time,
+                        r.cost_standard = $time * 0.5,
+                        r.cost_first    = $time * 0.5
                     """,
                     from_id=s["station_id"], to_id=adj["station_id"],
                     line=adj["line"], time=adj["travel_time_min"],
@@ -90,7 +92,9 @@ def seed():
                     MATCH (a:NationalRailStation {station_id: $from_id})
                     MATCH (b:NationalRailStation {station_id: $to_id})
                     MERGE (a)-[r:RAIL_LINK]->(b)
-                    SET r.line = $line, r.travel_time_min = $time
+                    SET r.line = $line, r.travel_time_min = $time,
+                        r.cost_standard = $time * 0.5,
+                        r.cost_first    = $time * 1.5
                     """,
                     from_id=s["station_id"], to_id=adj["station_id"],
                     line=adj["line"], time=adj["travel_time_min"],
@@ -108,9 +112,13 @@ def seed():
                     MATCH (m:MetroStation        {station_id: $metro_id})
                     MATCH (r:NationalRailStation {station_id: $rail_id})
                     MERGE (m)-[r1:INTERCHANGE_TO]->(r)
-                    SET r1.travel_time_min = 5
+                    SET r1.travel_time_min = 5,
+                        r1.cost_standard   = 0,
+                        r1.cost_first      = 0
                     MERGE (r)-[r2:INTERCHANGE_TO]->(m)
-                    SET r2.travel_time_min = 5
+                    SET r2.travel_time_min = 5,
+                        r2.cost_standard   = 0,
+                        r2.cost_first      = 0
                     """,
                     metro_id=s["station_id"], rail_id=rail_id,
                 )
