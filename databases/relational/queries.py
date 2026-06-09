@@ -308,7 +308,9 @@ def auto_select_adjacent_seats(available_seats: list[dict], count: int) -> list[
 def query_user_profile(user_email: str) -> Optional[dict]:
     """Return a user's profile by email."""
     sql = """
-        SELECT user_id, first_name, surname, email, phone, is_active, registered_at,
+        SELECT user_id, first_name, surname,
+               first_name || ' ' || surname AS full_name,
+               email, phone, is_active, registered_at,
                EXTRACT(YEAR FROM date_of_birth)::int AS year_of_birth
         FROM users
         WHERE email = %s
