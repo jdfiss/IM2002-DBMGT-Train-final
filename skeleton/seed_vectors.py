@@ -21,8 +21,20 @@ import time
 
 sys.path.insert(0, ".")
 
+import psycopg2
 from skeleton.llm_provider import llm
 from databases.relational.queries import store_policy_document
+from skeleton.config import PG_DSN
+
+
+def _clear_policy_documents():
+    conn = psycopg2.connect(PG_DSN)
+    try:
+        with conn.cursor() as cur:
+            cur.execute("TRUNCATE policy_documents RESTART IDENTITY")
+        conn.commit()
+    finally:
+        conn.close()
 
 _DATA_DIR = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "train-mock-data")
@@ -85,6 +97,7 @@ def build_documents():
 
 
 def seed():
+    _clear_policy_documents()
     documents = build_documents()
     print(f"📄 Embedding {len(documents)} policy documents using {llm.chat_provider}...\n")
 
